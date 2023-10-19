@@ -57,23 +57,21 @@
 		}
 
 		
-    	function checkStalemate() {
+	function checkStalemate() {
     		let isStalemate = true;
 
     		for (let i = 0; i < board.length; i++) {
 				if (board[i] === '') {
 					isStalemate = false;
-            	break;
+            		break;
         		}
     		}
 
     		if (isStalemate) {
         		gameOver = true;
-				if(checkWin = false) {
-					alert("It's a stalemate! Game over.");
-				}
-    		}
+				alert("It's a stalemate! Game over.");
 		}
+	}
 		
 
 		
