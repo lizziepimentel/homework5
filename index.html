@@ -1,94 +1,104 @@
-// JavaScript Document
-$(document).ready(function () {
-    let curPlayer = 'X';
-    let gameBoard = ['', '', '', '', '', '', '', '', ''];
-    let gameOver = false;
-
-    function Board() {
-        document.write('<div id="board" class="board">');
-        for (let i = 0; i < 9; i++) {
-            document.write(`<div class="square" data-index="${i}"></div>`);
-        }
-        document.write('</div>');
-        document.write('<button id="resetBtn">New Game</button>');
-    }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <title>Tic Tac Toe</title>
+</head>
 	
-	Board();
+<body>
+    <div class="board" id="board"></div>
 
-    function checkWin() {
-		const boardWin = [
-			//columns
-			[0, 3, 6], [1, 4, 7], [2, 5, 8],
-			//rows
-			[0, 1, 2], [3, 4, 5], [6, 7, 8],
-			//diagonals
-			[0, 4, 8], [2, 4, 6]
-		];
-		
-		let checkWinner = false;
-		let i = 0;
-		
-		while (i < boardWin.length) {
-			const [a, b, c] = boardWin [i];
+    <button id="resetbutton">New Game</button> 
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	
+    <script>
+        let currtPlayer = 'X'; // X starts
+		let board = ['', '', '', '', '', '', '', '', ''];
+
+		// Initialize an array for the board
+        let gameOver = false;
+
+        function buildBoard() {
+            const boardElement = document.getElementById('board');
 			
-			if (checkWinner === false) {
-				if (gameBoard[a] !== "" & gameBoard[a] === gameBoard[b]) {
-					if (gameBoard[b] === gameBoard[c]) {
-						checkWinner = true;
-					}
-				}
-			}
-			i++
-		}
-		return checkWinner
-	}
-
-	function checkTie() {
-    for (let i = 0; i < gameBoard.length; i++) {
-        if (gameBoard[i] === '') {
-            return false; // If any square is empty, it's not a tie
-        }
-    }
-    return true; // All squares are filled, indicating a tie
-	}
-
-
-    function switchPlayer() {
-       if (curPlayer === "X") {
-		   curPlayer = "0";
-	   } else {
-		   curPlayer = "X";
-	   }
-    }
-
-    function interaction() {
-		
-		if (gameOver === false & this.textContent === '') {
-    		const index = this.getAttribute('data-index');
-			gameBoard[index] = curPlayer;
-			this.textContent = curPlayer;
-		}
-
-
-            if (checkWin()) {
-                alert(`Player ${curPlayer} wins!`);
-                gameOver = true;
-            } else if (checkTie()) {
-                alert("It's a tie!");
-                gameOver = true;
-            } else {
-                switchPlayer();
+			//  <div class="square" id="0-9">
+            for (let i = 0; i < 9; i++) {
+                const square = document.createElement('div');
+                square.className = 'square';
+				square.id = i.toString();
+                square.addEventListener('click', () => userInteraction(i));
+                boardElement.append(square);
             }
         }
 
-    function resetGame() {
-        $('.square').text('');
-        gameBoard = ['', '', '', '', '', '', '', '', ''];
-        curPlayer = 'X';
-        gameOver = false;
-    }
+        function checkWin() {
+            const winBoard = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6] // Diagonals
+            ];
 
+            for (let i = 0; i < winBoard.length; i++) {
+                const [a, b, c] = winBoard[i];
 
-    $('.square').on('click', interaction);
-    $('#resetbutton').on('click', resetGame);
-});
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    gameOver = true;
+                    alert('Player ' + currtPlayer + ' wins! Game over.');
+                    break;
+                }
+            }
+        }
+
+        function checkStalemate() {
+            let isStalemate = true;
+
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === '') {
+                    isStalemate = false;
+                    break;
+                }
+            }
+
+            if (isStalemate) {
+                gameOver = true;
+                alert("It's a stalemate! Game over.");
+            }
+        }
+
+        function userInteraction(index) {
+            if (!board[index] && !gameOver) {
+                board[index] = currtPlayer;
+                document.getElementById(index.toString()).innerText = currtPlayer;
+                checkWin();
+                checkStalemate();
+                currtPlayer = switchPlayer(currtPlayer);
+            }
+        }
+
+        function switchPlayer(player) {
+            if (player === 'X') {
+                return 'O';
+            } else {
+                return 'X';
+            }
+        }
+
+        // Event listener for the reset button
+        document.getElementById('resetbutton').addEventListener('click', () => {
+            currtPlayer = 'X';
+            board = Array(9).fill('');
+            gameOver = false;
+
+            // Reset the visual representation of the board
+            const boardElement = document.getElementById('board');
+            boardElement.innerHTML = ''; // Clear the board
+            buildBoard(); // Rebuild the board
+            alert('New game started!');
+        });
+
+        // Call the buildBoard function to initialize the board
+        buildBoard();
+    </script>
+</body>
