@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <title>Tic Tac Toe</title>
+</head>
+	
+<body>
+	<div class="board">
+    <div class="square" id="0"></div>
+    <div class="square" id="1"></div>
+    <div class="square" id="2"></div>
+    <div class="square" id="3"></div>
+    <div class="square" id="4"></div>
+    <div class="square" id="5"></div>
+    <div class="square" id="6"></div>
+    <div class="square" id="7"></div>
+    <div class="square" id="8"></div>
+</div>
+
+	<button id="resetbutton">New Game</button> 
+
+
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	
+	
+	
+    <script>
+    	let currtPlayer = 'X'; // X starts
+		let board = ['', '', '', '', '', '', '', '', ''];
+    	let gameOver = false; 
+
+		
+    	function checkWin() {
+			
+			const winBoard = [
+    			[0, 1, 2], // Top Row
+    			[3, 4, 5], // Middle Row
+    			[6, 7, 8], // Bottom Row
+    			[0, 3, 6], // Left Column
+    			[1, 4, 7], // Middle Column
+    			[2, 5, 8], // Right Column
+    			[0, 4, 8], // Diagonal (top-left to bottom-right)
+    			[2, 4, 6]  // Diagonal (top-right to bottom-left)
+			];
+			
+			for (let i = 0; i < winBoard.length; i++) {
+				const [a, b, c] = winBoard[i];
+
+				if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+					gameOver = true;
+					alert('Player ' + currtPlayer + ' wins! Game over.');
+					break;
+        		}
+    		}
+		}
+
+		
+    	function checkStalemate() {
+    		let isStalemate = true;
+
+    		for (let i = 0; i < board.length; i++) {
+				if (board[i] === '') {
+					isStalemate = false;
+            	break;
+        		}
+    		}
+
+    		if (isStalemate) {
+        		gameOver = true;
+				if(checkWin = false) {
+					alert("It's a stalemate! Game over.");
+				}
+    		}
+		}
+		
+
+		
+    	function userInteraction(index) {
+    		if (!board[index] && !gameOver) {
+        		board[index] = currtPlayer;
+        		document.getElementById(index.toString()).innerText = currtPlayer;
+        		checkWin();
+        		checkStalemate();
+        		currtPlayer = switchPlayer(currtPlayer);
+    		}
+		}
+
+		
+		function switchPlayer(player) {
+			if (player === 'X') {
+				return 'O';
+    		} else {
+        		return 'X';
+    		}
+		}
+
+    // Event listener for square clicks
+    document.querySelector('.board').addEventListener('click', (event) => {
+       const squareIndex = event.target.id;
+       if (squareIndex) {
+		   userInteraction(parseInt(squareIndex));
+	   }
+	});
+
+    // Event listener for the reset button
+   document.getElementById('resetbutton').addEventListener('click', () => {
+	   currtPlayer = 'X';
+	   board = ['', '', '', '', '', '', '', '', ''];
+	   gameOver = false;
+
+        // Reset the visual representation of the board
+	   const squares = document.querySelectorAll('.square');
+	   squares.forEach(square => square.innerText = '');
+	   alert('New game started!');
+   });
+</script>
+
+
+</body>
+</html>
